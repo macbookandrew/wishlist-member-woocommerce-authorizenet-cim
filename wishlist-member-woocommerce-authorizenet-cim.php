@@ -2,7 +2,7 @@
 /*
 Plugin Name: Wishlist Member + Woocommerce + Authorize.net CIM
 Version: 1.0
-Description: PLUGIN DESCRIPTION HERE
+Description: Integrates Wishlist Member, Woocommerce Subscriptions, and the Authorize.net CIM gateway
 Author: AndrewRMinion Design
 Author URI: https://andrewrminion.com
 Plugin URI: http://code.andrewrminion.com/wishlist-member-woocommerce-subscriptions-authorize-net-cim/
@@ -28,7 +28,7 @@ add_action( 'admin_init', 'wlmwac_settings_init' );
  * Add options page
  */
 function wlmwac_add_admin_menu() {
-    add_options_page( 'wishlist-member-woocommerce-subscriptions-authorize-net-cim', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim', 'manage_options', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim_options_page' );
+    add_options_page( 'WishList Member + Woocommerce Subscriptions + Authorize.net CIM', 'WLM+WC+Auth.net', 'manage_options', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim', 'wlmwac_options_page' );
 }
 
 /**
@@ -40,14 +40,14 @@ function wlmwac_settings_init() {
 
     add_settings_section(
         'wlmwac_pluginPage_section',
-        __( 'WishList Member + Woocommerce Subscriptions + Authorize.net CIM', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim' ),
+        __( 'WishList Member Settings', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim' ),
         'wlmwac_settings_section_callback',
         'pluginPage'
     );
 
     add_settings_field(
         'postToUrl',
-        __( 'Settings field description', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim' ),
+        __( 'Post To URL', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim' ),
         'postToUrl_render',
         'pluginPage',
         'wlmwac_pluginPage_section'
@@ -55,7 +55,7 @@ function wlmwac_settings_init() {
 
     add_settings_field(
         'secretWord',
-        __( 'Settings field description', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim' ),
+        __( 'Secret Word', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim' ),
         'secretWord_render',
         'pluginPage',
         'wlmwac_pluginPage_section'
@@ -69,7 +69,7 @@ function wlmwac_settings_init() {
 function postToUrl_render() {
     $options = get_option( 'wlmwac_settings' );
     ?>
-    <input type='text' name='wlmwac_settings[postToUrl]' value='<?php echo $options['postToUrl']; ?>'>
+    <input type="url" name="wlmwac_settings[postToUrl]" value="<?php echo $options['postToUrl']; ?>" size="40">
     <?php
 }
 
@@ -79,7 +79,7 @@ function postToUrl_render() {
 function secretWord_render() {
     $options = get_option( 'wlmwac_settings' );
     ?>
-    <input type='text' name='wlmwac_settings[secretWord]' value='<?php echo $options['secretWord']; ?>'>
+    <input type="text" name="wlmwac_settings[secretWord]" value="<?php echo $options['secretWord']; ?>">
     <?php
 }
 
@@ -87,7 +87,9 @@ function secretWord_render() {
  * Print settings description
  */
 function wlmwac_settings_section_callback() {
-    echo __( 'Enter the “Post To URL” and “Secret Word” from the WishList Integrations page', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim' );
+    printf ( __( 'Enter the “Post To URL” and “Secret Word” from the <a href="%s">WishList Integrations page</a>.', 'wishlist-member-woocommerce-subscriptions-authorize-net-cim' ),
+        get_admin_url( get_current_blog_id, 'admin.php?page=WishListMember&wl=integration' )
+    );
 }
 
 
