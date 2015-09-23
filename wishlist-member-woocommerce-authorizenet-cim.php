@@ -72,9 +72,9 @@ function wlmwac_add_user_levels( $order_id ) {
     }
 
     if ( $member['success'] == 1 ) {
-        echo apply_filters( 'wlmwac_success', '<p>You&rsquo;ve been successfully registered. <a href="' . wp_login_url() . '">Log in</a> to access your content.</p>' );
+        echo apply_filters( 'wlmwac_register_success', '<p>You&rsquo;ve been successfully registered. <a href="' . wp_login_url() . '">Log in</a> to access your content.</p>' );
     } else {
-        echo '<p>We&rsquo;re sorry&hellip;something went wrong while setting up your account. Please contact us for help.</p>';
+        echo apply_filters( 'wlmwac_register_failure', '<p>We&rsquo;re sorry&hellip;something went wrong while setting up your account. Please contact us for help.</p>' );
     }
 }
 
