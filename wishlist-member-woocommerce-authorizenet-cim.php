@@ -76,5 +76,35 @@ function wlmwac_add_user_levels( $order_id ) {
     } else {
         echo '<p>We&rsquo;re sorry&hellip;something went wrong while setting up your account. Please contact us for help.</p>';
     }
+}
 
+/**
+ * Hook into cancelled/expired subscriptions actions
+ */
+add_action( 'cancelled_subscription', 'wlmwac_remove_user_levels', 10, 2 );
+add_action( 'subscription_end_of_prepaid_term', 'wlmwac_remove_user_levels', 10, 2 );
+add_action( 'subscription_expired', 'wlmwac_remove_user_levels', 10, 2 );
+add_action( 'subscription_put_on-hold', 'wlmwac_remove_user_levels', 10, 2 );
+add_action( 'subscription_trial_end', 'wlmwac_remove_user_levels', 10, 2 );
+add_action( 'scheduled_subscription_expiration', 'wlmwac_remove_user_levels', 10, 2 );
+
+/**
+ * Remove WLM access on subscription cancellation or expiration
+ * @param integer $user_id          ID of the user for whom the subscription was cancelled
+ * @param string  $subscription_key Subscription key for the just-cancelled subscription
+ */
+function wlmwac_remove_user_levels( $user_id, $subscription_key ) {
+
+    // get original order information
+    $order_details = WC_Subscriptions_Manager::get_subscription( $subscription_key );
+    $product = new WC_Product( $order_details['product_id'] );
+
+    // remove member from level
+    $member = wlmapi_remove_member_from_level( $product->get_sku(), $user_id );
+
+    if ( $member['success'] == 1 ) {
+        echo apply_filters( 'wlmwac_cancel_success', '<p>Your subscription has been successfully cancelled.</p>' );
+    } else {
+        echo apply_filters( 'wlmwac_cancel_failure', '<p>We&rsquo;re sorry&hellip;something went wrong while cancelling your subscription. Please contact us for help.</p>' );
+    }
 }
