@@ -71,7 +71,7 @@ function wlmwac_add_user_levels( $order_id ) {
         ));
     }
 
-    if ( $member['success'] == 1 ) {
+    if ( 1 == $member['success'] ) {
         echo apply_filters( 'wlmwac_register_success', '<p>You&rsquo;ve been successfully registered. <a href="' . wp_login_url() . '">Log in</a> to access your content.</p>' );
     } else {
         echo apply_filters( 'wlmwac_register_failure', '<p>We&rsquo;re sorry&hellip;something went wrong while setting up your account. Please contact us for help.</p>' );
@@ -102,8 +102,8 @@ function wlmwac_remove_user_levels( $user_id, $subscription_key ) {
     // remove member from level
     $member = wlmapi_remove_member_from_level( $product->get_sku(), $user_id );
 
-    if ( $member['success'] == 1 ) {
         echo apply_filters( 'wlmwac_cancel_success', '<p>Your subscription has been successfully cancelled.</p>' );
+    if ( 1 == $member['success'] ) {
     } else {
         echo apply_filters( 'wlmwac_cancel_failure', '<p>We&rsquo;re sorry&hellip;something went wrong while cancelling your subscription. Please contact us for help.</p>' );
     }
