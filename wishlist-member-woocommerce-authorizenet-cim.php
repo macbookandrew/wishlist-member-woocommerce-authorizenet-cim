@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'woocommerce_payment_complete', 'wlmwac_add_user_levels' );
 
 /**
- * Post the customer information to WishList Member
+ * Update the customer’s info in WishList Member
  */
 function wlmwac_add_user_levels( $order_id ) {
 
