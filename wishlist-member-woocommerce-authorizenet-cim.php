@@ -72,9 +72,9 @@ function wlmwac_add_user_levels( $order_id ) {
     }
 
     if ( 1 == $member['success'] ) {
-        return apply_filters( 'wlmwac_register_success', '<p>You&rsquo;ve been successfully registered. <a href="' . wp_login_url() . '">Log in</a> to access your content.</p>' );
+        write_log( 'WLMWAC: customer ' . $username . ' succesfully added to level ' . $new_levels );
     } else {
-        return apply_filters( 'wlmwac_register_failure', '<p>We&rsquo;re sorry&hellip;something went wrong while setting up your account. Please contact us for help.</p>' );
+        write_log( 'WLMWAC: failed adding customer ' . $username . ' to level ' . $new_levels );
     }
 }
 
@@ -103,9 +103,9 @@ function wlmwac_remove_user_levels( $user_id, $subscription_key ) {
     $member = wlmapi_remove_member_from_level( $product->get_sku(), $user_id );
 
     if ( 1 == $member['success'] ) {
-        write_log( 'WishList Member: customer ' . $user_id . ' successfully removed from level ' . $product->get_sku() );
+        write_log( 'WLMWAC: customer ' . $user_id . ' successfully removed from level ' . $product->get_sku() );
     } else {
-        write_log( 'WishList Member: failed removing customer ' . $user_id . ' from level ' . $product->get_sku() );
+        write_log( 'WLMWAC: failed removing customer ' . $user_id . ' from level ' . $product->get_sku() );
     }
 }
 
