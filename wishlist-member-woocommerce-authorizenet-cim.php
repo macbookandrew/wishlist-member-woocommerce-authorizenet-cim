@@ -2,10 +2,10 @@
 /*
 Plugin Name: Wishlist Member + Woocommerce + Authorize.net CIM
 Version: 1.0
-Description: Integrates Wishlist Member, Woocommerce Subscriptions, and the Authorize.net CIM gateway
+Description: Integrates Wishlist Member, Woocommerce, and the Authorize.net CIM gateway
 Author: AndrewRMinion Design
 Author URI: https://andrewrminion.com
-Plugin URI: http://code.andrewrminion.com/wishlist-member-woocommerce-subscriptions-authorize-net-cim/
+Plugin URI: http://code.andrewrminion.com/wishlist-member-woocommerce-authorize-net-cim/
 Text Domain: wishlist-member-woocommerce-authorizenet-cim
 Domain Path: /languages
 */
