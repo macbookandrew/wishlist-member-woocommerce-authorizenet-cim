@@ -25,7 +25,9 @@ This plugin integrates WishList Member, Woocommerce, and the Authorize.net CIM g
 
 = How does it work? =
 
-When the Woocommerce thankyou page is loaded, this plugin checks each purchased product and adds the user to the appropriate levels based on the product SKUs.
+When the Woocommerce thankyou page is loaded, this plugin checks each purchased product and adds the user to the appropriate level(s) based on the product SKU(s).
+
+When a subscription is cancelled or expires, the user is removed from the appropriate level(s).
 
 == Changelog ==
 

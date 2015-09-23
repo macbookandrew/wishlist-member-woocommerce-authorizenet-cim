@@ -1,4 +1,4 @@
-# Wishlist Member + Woocommerce Subscriptions + Authorize.net CIM #
+# Wishlist Member + Woocommerce + Authorize.net CIM #
 **Contributors:** macbookandrew  
 **Donate link:** https://cash.me/$AndrewRMinionDesign  
 **Tags:** wishlist, membership, woocommerce, authorize, authorize.net  
@@ -8,23 +8,26 @@
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
-This plugin integrates WishList Member, Woocommerce Subscriptions, and the Authorize.net CIM gateway.
+This plugin integrates WishList Member, Woocommerce, and the Authorize.net CIM gateway.
 
 ## Description ##
 
-This plugin integrates WishList Member, Woocommerce Subscriptions, and the Authorize.net CIM gateway.
-
-Currently, WishList Member integrates with Authorize.net ARB and simple checkout, but not CIM.
+This plugin integrates WishList Member, Woocommerce, and the Authorize.net CIM gateway specifically, though it should work with any gateway that redirects to the Woocommerce thank-you page.
 
 ## Installation ##
 
 1. Upload `wishlist-member-woocommerce-authorizenet-cim` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the “Plugins” menu in WordPress
 1. In WishList Member settings, go to “Integration” and then to “Shopping Cart.” Choose “Generic” from the shoppingcart menu and press the “Set Shopping Cart” button.
-1. Copy two pieces of information from the WishList Member Integrations page to this plugin’s Settings page (under “Settings” in the WP admin):
-    1. The “Post To URL” from the WishList Member integrations page goes in the “Post To URL” field
-    1. The “Secret Word” from the WishList Member integrations page goes in the “Secret Word” field
-1. Create the products and assign SKU numbers as instructed by WishList Member
+1. Create the Woocommerce products and assign the appropriate SKU numbers as instructed by WishList Member
+
+## Frequently Asked Questions ##
+
+### How does it work? ###
+
+When the Woocommerce thankyou page is loaded, this plugin checks each purchased product and adds the user to the appropriate level(s) based on the product SKU(s).
+
+When a subscription is cancelled or expires, the user is removed from the appropriate level(s).
 
 ## Changelog ##
 
