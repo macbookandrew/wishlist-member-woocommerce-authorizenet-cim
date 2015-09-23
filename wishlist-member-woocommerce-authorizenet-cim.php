@@ -134,56 +134,54 @@ function wlmwac_post_to_wlm( $order_id ) {
     // get order info
     $order = new WC_Order( $order_id );
 
-    // set up curl connection
-    $ch = curl_init( $post_URL );
-    curl_setopt( $ch, CURLOPT_POST, true );
-    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+    // set up levels array
+    $new_levels = array();
 
     // loop through items post each to the postToURL
     foreach ( $order->get_items() as $item ) {
+        // get product data
         $product = $order->get_product_from_item( $item );
 
-        // prepare the customer’s data
-        $data = array ();
-        #TODO: check for existing subscription and ACTIVATE with old transaction_id
-        $api_command = 'CREATE';
-        $data['cmd'] = $api_command;
-        $data['lastname'] = $order->billing_last_name;
-        $data['firstname'] = $order->billing_first_name;
-        $data['email'] = $order->billing_email;
-        $data['level'] = $product->sku;
-        $data['transaction_id'] = $order_id;
-
-        // generate the hash
-        $delimited_data = strtoupper ( implode ( '|', $data ) );
-        $hash = md5( $api_command . '__' . $secret_word . '__' . $delimited_data );
-
-        // include the hash to the data to be sent
-        $data['hash'] = $hash;
-
-        // send data to the post URL
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
-        $returnValue = curl_exec( $ch );
-
-        // process return value
-        list( $cmd, $url ) = explode ("\n", $returnValue);
-
-        // check if the returned command is the same as what we passed
-        if ( $cmd == 'CREATE' ) {
-            echo apply_filters( 'wlmwac_success', '<p>You&rsquo;ve been successfully registered. <a href="' . wp_login_url() . '">Log in</a> to access your content.</p>' );
-
-            // finish registration by pulling the continue link in the background
-            #TODO: search for existing WP user and adding this level to their account, or create new user if none exists
-            $finish_registration = curl_init( $url );
-            curl_setopt( $finish_registration, CURLOPT_RETURNTRANSFER, true );
-            curl_exec( $finish_registration );
-            curl_close( $finish_registration );
-        } else {
-            echo '<p>We&rsquo;re sorry&hellip;something went wrong while setting up your account. Please contact us for help.</p>';
-        }
+        // assign to array
+        $new_levels[] = $product->sku;
     }
 
-    // close curl connection
-    curl_close( $ch );
+    // check for existing user by email address
+    $this_user = get_user_by( 'email', $order->billing_email );
+
+    // add or update members
+    if ( ! $this_user ) {
+        // check for username conflicts
+        if ( username_exists( $order->billing_first_name . $order->billing_last_name ) ) {
+            $username = $order->billing_first_name . $order->billing_last_name . $order_id;
+        } else {
+            $username = $order->billing_first_name . $order->billing_last_name;
+        }
+
+        // add new member with these levels
+        $member = wlmapi_add_member( array(
+            'user_login'        => $username,
+            'user_email'        => $order->billing_email,
+            'address1'          => $order->billing_address_1,
+            'address2'          => $order->billing_address_2,
+            'city'              => $order->billing_city,
+            'state'             => $order->billing_state,
+            'zip'               => $order->billing_postcode,
+            'country'           => $order->billing_country,
+            'Levels'            => $new_levels
+        ));
+    } else {
+        // add these levels to an existing member
+        $member = wlmapi_update_member( $this_user->ID, array(
+            'user_email'        => $order->billing_email,
+            'Levels'            => $new_levels
+        ));
+    }
+
+    if ( $member['success'] == 1 ) {
+        echo apply_filters( 'wlmwac_success', '<p>You&rsquo;ve been successfully registered. <a href="' . wp_login_url() . '">Log in</a> to access your content.</p>' );
+    } else {
+        echo '<p>We&rsquo;re sorry&hellip;something went wrong while setting up your account. Please contact us for help.</p>';
+    }
 
 }
