@@ -112,3 +112,78 @@ function wlmwac_options_page() {
     <?php
 }
 
+/**
+ * Hook into the completed order action
+ */
+add_action( 'woocommerce_thankyou', 'wlmwac_post_to_wlm' );
+
+/**
+ * Post the customer information to WishList Member
+ */
+function wlmwac_post_to_wlm( $order_id ) {
+
+    // get options
+    $wlmwac_options = get_option( 'wlmwac_settings' );
+
+    // set the post URL
+    $post_URL = $wlmwac_options['postToUrl'];
+
+    // set the secret key
+    $secret_word = $wlmwac_options['secretWord'];
+
+    // get order info
+    $order = new WC_Order( $order_id );
+
+    // set up curl connection
+    $ch = curl_init( $post_URL );
+    curl_setopt( $ch, CURLOPT_POST, true );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+
+    // loop through items post each to the postToURL
+    foreach ( $order->get_items() as $item ) {
+        $product = $order->get_product_from_item( $item );
+
+        // prepare the customer’s data
+        $data = array ();
+        #TODO: check for existing subscription and ACTIVATE with old transaction_id
+        $api_command = 'CREATE';
+        $data['cmd'] = $api_command;
+        $data['lastname'] = $order->billing_last_name;
+        $data['firstname'] = $order->billing_first_name;
+        $data['email'] = $order->billing_email;
+        $data['level'] = $product->sku;
+        $data['transaction_id'] = $order_id;
+
+        // generate the hash
+        $delimited_data = strtoupper ( implode ( '|', $data ) );
+        $hash = md5( $api_command . '__' . $secret_word . '__' . $delimited_data );
+
+        // include the hash to the data to be sent
+        $data['hash'] = $hash;
+
+        // send data to the post URL
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
+        $returnValue = curl_exec( $ch );
+
+        // process return value
+        list( $cmd, $url ) = explode ("\n", $returnValue);
+
+        // check if the returned command is the same as what we passed
+        if ( $cmd == 'CREATE' ) {
+            echo apply_filters( 'wlmwac_success', '<p>You&rsquo;ve been successfully registered. <a href="' . wp_login_url() . '">Log in</a> to access your content.</p>' );
+
+            // finish registration by pulling the continue link in the background
+            #TODO: search for existing WP user and adding this level to their account, or create new user if none exists
+            $finish_registration = curl_init( $url );
+            curl_setopt( $finish_registration, CURLOPT_RETURNTRANSFER, true );
+            curl_exec( $finish_registration );
+            curl_close( $finish_registration );
+        } else {
+            echo '<p>We&rsquo;re sorry&hellip;something went wrong while setting up your account. Please contact us for help.</p>';
+        }
+    }
+
+    // close curl connection
+    curl_close( $ch );
+
+}
