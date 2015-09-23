@@ -18,9 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Hook into the completed order action
+ * Hook into the payment complete action
  */
-add_action( 'woocommerce_thankyou', 'wlmwac_add_user_levels' );
+add_action( 'woocommerce_payment_complete', 'wlmwac_add_user_levels' );
 
 /**
  * Post the customer information to WishList Member
