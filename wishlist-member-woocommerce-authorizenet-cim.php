@@ -102,9 +102,24 @@ function wlmwac_remove_user_levels( $user_id, $subscription_key ) {
     // remove member from level
     $member = wlmapi_remove_member_from_level( $product->get_sku(), $user_id );
 
-        echo apply_filters( 'wlmwac_cancel_success', '<p>Your subscription has been successfully cancelled.</p>' );
     if ( 1 == $member['success'] ) {
+        write_log( 'WishList Member: customer ' . $user_id . ' successfully removed from level ' . $product->get_sku() );
     } else {
-        echo apply_filters( 'wlmwac_cancel_failure', '<p>We&rsquo;re sorry&hellip;something went wrong while cancelling your subscription. Please contact us for help.</p>' );
+        write_log( 'WishList Member: failed removing customer ' . $user_id . ' from level ' . $product->get_sku() );
+    }
+}
+
+/*
+ * Log errors to WP_DEBUG if available
+ */
+if ( ! function_exists( 'write_log' ) ) {
+    function write_log ( $log )  {
+        if ( true === WP_DEBUG ) {
+            if ( is_array( $log ) || is_object( $log ) ) {
+                error_log( print_r( $log, true ) );
+            } else {
+                error_log( $log );
+            }
+        }
     }
 }
